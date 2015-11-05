@@ -3,7 +3,8 @@ describe('Match: Controller', function() {
   var controller;
 
   beforeEach(function() {
-    bard.appModule('app.match');
+    module('app.match');
+    module('stateMock');
     bard.inject('$controller', '$log', '$rootScope');
   });
 
@@ -61,13 +62,6 @@ describe('Match: Controller', function() {
         bard.inject('MatchService', '$q', '$log');
       });
 
-      it('should call the create service', function() {
-        sinon.stub(MatchService, 'create').returns($q.when({}));
-        controller.create(match);
-        expect(MatchService.create).have.been.calledOnce;
-        expect(MatchService.create).have.been.calledWith(match);
-      });
-
       describe('where create fails', function() {
         var errorMsg = 'something went wrong';
         beforeEach(function() {
@@ -82,7 +76,23 @@ describe('Match: Controller', function() {
       });
 
       describe('where create succeds', function() {
+        beforeEach(function() {
+          bard.inject('$state');
+          sinon.stub(MatchService, 'create').returns($q.when(match));
+          $state.expectTransitionTo('match');
+        });
 
+        it('should redirect to match/:id', function() {
+          controller.create(match);
+          $rootScope.$apply();
+          $state.ensureAllTransitionsHappened();
+        });
+
+        it('should call the create service', function() {
+          controller.create(match);
+          expect(MatchService.create).have.been.calledOnce;
+          expect(MatchService.create).have.been.calledWith(match);
+        });
       });
 
     });

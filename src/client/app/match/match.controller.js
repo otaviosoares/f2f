@@ -6,7 +6,7 @@
     .controller('CreateMatchController', CreateMatchController)
     .controller('MatchController', MatchController);
 
-  MatchController.$inject = CreateMatchController.$inject = ['logger', 'MatchService'];
+  MatchController.$inject = ['logger'];
   /* @ngInject */
   function MatchController(logger) {
     var vm = this;
@@ -19,7 +19,9 @@
     }
   }
 
-  function CreateMatchController(logger, MatchService) {
+  CreateMatchController.$inject = ['$state', 'logger', 'MatchService'];
+
+  function CreateMatchController($state, logger, MatchService) {
     var vm = this;
     vm.match = {
       theme: 'default'
@@ -36,9 +38,15 @@
     }
 
     function create(match) {
-      MatchService.create(match).catch(function(err) {
-        logger.error(err);
-      });
+      var service = MatchService.create(match)
+        .then(function(data) {
+          $state.go('match', {
+            id: data.id
+          });
+        })
+        .catch(function(err) {
+          logger.error(err);
+        });
     }
 
   }
