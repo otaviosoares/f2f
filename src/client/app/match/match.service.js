@@ -7,17 +7,17 @@
 
   MatchService.$inject = ['logger'];
   /* @ngInject */
-  function MatchService(logger) {
+  function MatchService(logger, FirebaseBaseService) {
     var service = {
       create: create
     };
 
+    FirebaseBaseService.init('match');
+
     return service;
 
-    function create() {
-      logger.info('q isso jovem');
-      return 's';
+    function create(obj) {
+      FirebaseBaseService.save(obj);
     }
   }
-
 })();
