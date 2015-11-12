@@ -13,7 +13,9 @@ describe('Match: Controller', function() {
   describe('Match controller', function() {
 
     beforeEach(function() {
-      controller = $controller('MatchController');
+      controller = $controller('MatchController', {
+        MatchService: sinon.stub()
+      });
       $rootScope.$apply();
     });
 

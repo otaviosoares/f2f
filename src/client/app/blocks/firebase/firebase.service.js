@@ -3,19 +3,22 @@
 
   angular
     .module('app.firebase')
-    .service('FirebaseBaseService', FirebaseBaseService);
+    .factory('FirebaseData', FirebaseData)
+    .factory('FirebaseService', FirebaseService);
 
-  function FirebaseBaseService($window, config) {
-    var _ref = null;
-    this.init = function(modelName) {
-      _ref = new $window.Firebase(config.firebaseUrl + modelName);
+  function FirebaseData($window, config) {
+    var _ref = new $window.Firebase(config.firebaseUrl);
+    return _ref;
+  }
+
+  function FirebaseService(FirebaseData, $firebaseArray) {
+    return {
+      all: all
     };
-    this.get = function(argument) {
-      return _ref;
-    };
-    this.push = function(obj) {
-      _ref.push(obj);
-    };
+
+    function all(childName) {
+      return $firebaseArray(FirebaseData.child(childName));
+    }
   }
 
 })();

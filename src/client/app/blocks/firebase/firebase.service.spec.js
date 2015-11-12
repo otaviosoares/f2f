@@ -1,36 +1,55 @@
 /* jshint -W117, -W030 */
-describe('Firebase: Service', function() {
-  var service;
+describe('Firebase: Services', function() {
   beforeEach(function() {
-    bard.appModule('app.firebase');
-    bard.inject('config', 'FirebaseBaseService', '$rootScope', '$window');
-    service = FirebaseBaseService;
+    bard.appModule('app.firebase', 'angularFireMock');
+    bard.inject('$window', 'config');
   });
 
-  bard.verifyNoOutstandingHttpRequests();
+  afterEach(function() {});
 
-  describe('service init', function() {
+  //bard.verifyNoOutstandingHttpRequests();
+
+  describe('FirebaseData', function() {
     beforeEach(function() {
-      sinon.stub($window, 'Firebase');
+      bard.inject();
+      sinon.spy(window, 'Firebase');
+      bard.inject('FirebaseData');
     });
 
     afterEach(function() {
-      $window.Firebase.restore();
+      window.Firebase.restore();
     });
 
     it('should be create successfully', function() {
-      expect(service).to.be.defined;
+      expect(FirebaseData).to.be.defined;
+    });
+
+    it('should call Firebase constructor with firebaseUrl', function() {
+      expect(Firebase).have.been.calledOnce;
+      expect(Firebase).have.been.calledWith(config.firebaseUrl);
     });
 
     it('should create an instance of firebase', function() {
-      service.init('test');
-      expect(Firebase).have.been.calledOnce;
-      expect(Firebase).have.been.calledWith(config.firebaseUrl + 'test');
+      expect(FirebaseData).to.be.instanceOf(Firebase);
     });
 
-    xit('should keep its state even if called twice', function() {
-      expect(Firebase).have.been.calledWith(config.firebaseUrl + 'test');
+  });
+
+  describe('FirebaseService', function() {
+    beforeEach(function() {
+      bard.inject('FirebaseService', 'angularFireMockUtils');
     });
 
+    afterEach(function() {});
+    it('should be create successfully', function() {
+      expect(FirebaseService).to.be.defined;
+    });
+
+    it('should create an firebase array', function() {
+      var testData = [1, 2, 3];
+      angularFireMockUtils.setFakeData('test', testData);
+      var firebaseArray = FirebaseService.all('test');
+      expect(firebaseArray).to.equal(testData);
+    });
   });
 });

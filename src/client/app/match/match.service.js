@@ -5,18 +5,18 @@
     .module('app.match')
     .factory('MatchService', MatchService);
 
-  MatchService.$inject = ['logger', 'FirebaseBaseService'];
+  MatchService.$inject = ['logger', 'FirebaseData'];
   /* @ngInject */
-  function MatchService(logger, FirebaseBaseService) {
+  function MatchService(logger, FirebaseData) {
     var service = {
       create: create
     };
-    FirebaseBaseService.init('match');
+    //FirebaseBaseService.init('match');
 
     return service;
 
     function create(obj) {
-      FirebaseBaseService.save(obj);
+      //FirebaseBaseService.save(obj);
     }
   }
 })();
